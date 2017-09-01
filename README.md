@@ -1,8 +1,6 @@
 # Draftcheck.jl
 
-[![Build Status](https://travis-ci.org/sisl/Draftcheck.jl.svg?branch=master)](https://travis-ci.org/sisl/Draftcheck.jl)
-
-[![Coverage Status](https://coveralls.io/repos/sisl/Draftcheck.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/sisl/Draftcheck.jl?branch=master)
+[![Build Status](https://travis-ci.org/sisl/Draftcheck.jl.svg?branch=master)](https://travis-ci.org/sisl/Draftcheck.jl) [![Coverage Status](https://coveralls.io/repos/sisl/Draftcheck.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/sisl/Draftcheck.jl?branch=master)
 
 Draftcheck.jl checks LaTeX documents for common errors using regular expressions. It was inspired by the Python package [draftcheck](https://github.com/ebnn/draftcheck).
 
