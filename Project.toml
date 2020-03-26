@@ -1,0 +1,6 @@
+name = "Draftcheck"
+uuid = "57908bcc-d2d9-5ef9-8b3e-ebf97789f79e"
+license = "MIT"
+
+[compat]
+julia = "1.2"

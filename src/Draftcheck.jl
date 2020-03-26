@@ -38,7 +38,7 @@ function _add_all_filenames!(filename, filenames, paths)
                 return
             end
         end
-        warn("Missing file $filename")
+        @warn("Missing file $filename")
     end
 end
 
@@ -65,13 +65,13 @@ function check(filename, rule_file; follow_links = true)
     global rules
     counter = 1
     for line in readlines(filename)
-        comment = ismatch(r"%", line)
+        comment = occursin(r"%", line)
         if !comment
             for r in rules
-                if ismatch(r.regex, line) && !ismatch(Regex("% OK $(r.name)"), line)
-                    print_with_color(:yellow, "$(r.name): ", bold=true)
+                if occursin(r.regex, line) && !occursin(Regex("% OK $(r.name)"), line)
+                    printstyled("$(r.name): ", color=:yellow, bold=true)
                     println(r.err)
-                    print_with_color(:green, "$filename: $counter")
+                    printstyled("$filename: $counter", color=:green)
                     println()
                     new = println("$(lstrip(line))")
                     println()
