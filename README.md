@@ -10,7 +10,7 @@ We can check a single document like this:
 ```julia
 check("myfile.tex", "rules.jl")
 ```
-By default, it will follow `\input` and `\include` links if you specify a single file. You can override this by specifying `follow_links = true`. If you want to specify an array of files, we can do the following:
+By default, it will follow `\input` and `\include` links if you specify a single file. You can override this by specifying `follow_links = false`. If you want to specify an array of files, we can do the following:
 ```julia
 check(["myfile1.tex", "myfile2.tex", "myfile3.tex"], "rules.jl")
 ```
