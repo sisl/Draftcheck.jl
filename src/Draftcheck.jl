@@ -8,22 +8,22 @@ function get_all_filenames(filename)
     return filenames
 end
 function _add_all_filenames!(filename, filenames, paths)
-    if in(filename, filenames)
+    if filename ∈ filenames
         return
     end
     if isfile(filename)
         push!(filenames, filename)
-        if !in(dirname(filename), paths)
+        if dirname(filename) ∉ paths
             push!(paths, dirname(filename))
         end
         for line in readlines(filename)
             for a in eachmatch(r"\\input{([^}]+)}", line)
-                if !in(a.captures[1], filenames)
+                if a.captures[1] ∉ filenames
                     _add_all_filenames!(a.captures[1], filenames, paths)
                 end
             end
             for a in eachmatch(r"\\include{([^}]+)}", line)
-                if !in(a.captures[1], filenames)
+                if a.captures[1] ∉ filenames
                     _add_all_filenames!(a.captures[1], filenames, paths)
                 end
             end
@@ -62,9 +62,9 @@ function check(filename, rule_file; follow_links = true)
         check(get_all_filenames(filename), "")
         return
     end
+
     global rules
-    counter = 1
-    for line in readlines(filename)
+    for (counter, line) in enumerate(readlines(filename))
         comment = occursin(r"%", line)
         if !comment
             for r in rules
@@ -78,7 +78,6 @@ function check(filename, rule_file; follow_links = true)
                 end
             end
         end
-        counter +=1
     end
 end
 
