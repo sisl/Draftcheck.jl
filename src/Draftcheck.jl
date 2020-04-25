@@ -53,13 +53,14 @@ function rule(name, regex, err)
     push!(rules, Rule(name, regex, err))
 end
 
-function check(filename, rule_file; follow_links = true)
+function check(filename, rule_file; follow_links = true, whitelist = Whitelist())
+    success = true
     if !isempty(rule_file)
         global rules = []
         include(rule_file)
     end
     if follow_links
-        check(get_all_filenames(filename), "")
+        check(get_all_filenames(filename), "", whitelist = whitelist)
         return
     end
 
@@ -69,26 +70,50 @@ function check(filename, rule_file; follow_links = true)
         if !comment
             for r in rules
                 if occursin(r.regex, line) && !occursin(Regex("% OK $(r.name)"), line)
-                    printstyled("$(r.name): ", color=:yellow, bold=true)
-                    println(r.err)
-                    printstyled("$filename: $counter", color=:green)
-                    println()
-                    new = println("$(lstrip(line))")
-                    println()
+                    s = "$(r.name): $(r.err)\n$filename: $counter\n$(lstrip(line))"
+                    if !contains(whitelist, s)
+                        println(s)
+                        println()
+                        success = false
+                    end
                 end
             end
         end
     end
+    return success
 end
 
-function check(filenames::Vector, rule_file; follow_links = false)
+struct Whitelist
+    data::Set{String}
+end
+
+function Whitelist(; filename::String = "whitelist.txt")
+    w = Whitelist(Set{String}())
+    if !isfile(filename)
+        return w
+    end
+    s = ""
+    for (i, line) in enumerate(readlines(filename))
+        j = mod1(i, 4)
+        if j == 1
+            s = line
+        elseif j < 4
+            s *= "\n$line"
+        else
+            push!(w.data, s)
+        end
+    end
+    return w
+end
+
+contains(w::Whitelist, s::String) = s ∈ w.data
+
+function check(filenames::Vector, rule_file; follow_links = false, whitelist = Whitelist())
     if !isempty(rule_file)
         global rules = []
         include(rule_file)
     end
-    for f in filenames
-        check(f, "", follow_links = follow_links)
-    end
+    return all(check(f, "", follow_links = follow_links, whitelist = whitelist) for f in filenames)
 end
 
 end # module
