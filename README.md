@@ -18,9 +18,9 @@ By default, it will not follow links, but this can be overridden.
 
 It will return true if all checks pass and false otherwise.
 
-## Whitelist
+## Allowed
 
-We can specify which errors to ignore in a file called `whitelist.txt` in the directory from which we run the check command. The file must appear identical in format to the output produced by Draftcheck.jl. One workflow is to pipe the output of Draftcheck.jl to `whitelist.txt` and then remove any lines we want to preserve as errors.
+We can specify which errors to ignore in a file called `allowed.txt` in the directory from which we run the check command. The file must appear identical in format to the output produced by Draftcheck.jl. One workflow is to pipe the output of Draftcheck.jl to `allowed.txt` and then remove any lines we want to preserve as errors.
 
 ## Rules
 

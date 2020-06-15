@@ -53,14 +53,14 @@ function rule(name, regex, err)
     push!(rules, Rule(name, regex, err))
 end
 
-function check(filename, rule_file; follow_links = true, whitelist = Whitelist())
+function check(filename, rule_file; follow_links = true, allowed = Allowed())
     success = true
     if !isempty(rule_file)
         global rules = []
         include(rule_file)
     end
     if follow_links
-        check(get_all_filenames(filename), "", whitelist = whitelist)
+        check(get_all_filenames(filename), "", allowed = allowed)
         return
     end
 
@@ -71,7 +71,7 @@ function check(filename, rule_file; follow_links = true, whitelist = Whitelist()
             for r in rules
                 if occursin(r.regex, line) && !occursin(Regex("% OK $(r.name)"), line)
                     s = "$(r.name): $(r.err)\n$filename: $counter\n$(lstrip(line))"
-                    if !contains(whitelist, s)
+                    if !contains(allowed, s)
                         println(s)
                         println()
                         success = false
@@ -83,12 +83,12 @@ function check(filename, rule_file; follow_links = true, whitelist = Whitelist()
     return success
 end
 
-struct Whitelist
+struct allowed
     data::Set{String}
 end
 
-function Whitelist(; filename::String = "whitelist.txt")
-    w = Whitelist(Set{String}())
+function Allowed(; filename::String = "allowed.txt")
+    w = Allowed(Set{String}())
     if !isfile(filename)
         return w
     end
@@ -106,14 +106,14 @@ function Whitelist(; filename::String = "whitelist.txt")
     return w
 end
 
-contains(w::Whitelist, s::String) = s ∈ w.data
+contains(w::Allowed, s::String) = s ∈ w.data
 
-function check(filenames::Vector, rule_file; follow_links = false, whitelist = Whitelist())
+function check(filenames::Vector, rule_file; follow_links = false, allowed = Allowed())
     if !isempty(rule_file)
         global rules = []
         include(rule_file)
     end
-    return all(check(f, "", follow_links = follow_links, whitelist = whitelist) for f in filenames)
+    return all(check(f, "", follow_links = follow_links, allowed = allowed) for f in filenames)
 end
 
 end # module
