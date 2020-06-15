@@ -83,7 +83,7 @@ function check(filename, rule_file; follow_links = true, allowed = Allowed())
     return success
 end
 
-struct allowed
+struct Allowed
     data::Set{String}
 end
 
