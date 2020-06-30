@@ -17,14 +17,16 @@ function _add_all_filenames!(filename, filenames, paths)
             push!(paths, dirname(filename))
         end
         for line in readlines(filename)
-            for a in eachmatch(r"\\input{([^}]+)}", line)
-                if a.captures[1] ∉ filenames
-                    _add_all_filenames!(a.captures[1], filenames, paths)
+            if !occursin(r"^\W*%", line)
+                for a in eachmatch(r"\\input{([^}]+)}", line)
+                    if a.captures[1] ∉ filenames
+                        _add_all_filenames!(a.captures[1], filenames, paths)
+                    end
                 end
-            end
-            for a in eachmatch(r"\\include{([^}]+)}", line)
-                if a.captures[1] ∉ filenames
-                    _add_all_filenames!(a.captures[1], filenames, paths)
+                for a in eachmatch(r"\\include{([^}]+)}", line)
+                    if a.captures[1] ∉ filenames
+                        _add_all_filenames!(a.captures[1], filenames, paths)
+                    end
                 end
             end
         end
@@ -66,7 +68,7 @@ function check(filename, rule_file; follow_links = true, allowed = Allowed())
 
     global rules
     for (counter, line) in enumerate(readlines(filename))
-        comment = occursin(r"%", line)
+        comment = occursin(r"^\W*%", line)
         if !comment
             for r in rules
                 if occursin(r.regex, line) && !occursin(Regex("% OK $(r.name)"), line)
